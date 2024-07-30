@@ -4,7 +4,6 @@ import { currentUser, BaseCurrentUser } from '@/services/auth-service'
 import { useMutation } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { getTokenFromLocalStorage, removeTokenFromLocalStorage } from '@/utils/tokenManager'
 
 interface AuthLayoutProps {
   children: JSX.Element
@@ -13,9 +12,7 @@ interface AuthLayoutProps {
 const AuthLayout = ({ children }: AuthLayoutProps) => {
   const router = useRouter()
   const [errorMessage, setErrorMessage] = useState('')
-
-  const token = getTokenFromLocalStorage()
-
+  
   const { mutate } = useMutation({
     mutationFn: currentUser,
     onError: (error) => {
@@ -27,13 +24,10 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
     mutate()
   }, [])
 
-  if (!token ?? errorMessage === 'Unauthorized') {
-    removeTokenFromLocalStorage()
+  if (errorMessage === 'Unauthorized') {
     router.push('/')
     return null
-  } else {
-    return children
-  }
+  } else return children
 }
 
 export default AuthLayout

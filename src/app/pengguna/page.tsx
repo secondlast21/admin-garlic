@@ -1,3 +1,5 @@
+'useclient'
+
 import { Metadata, NextPage } from 'next'
 import Pengguna from '@/modules/pengguna'
 import MainLayout from '@/layout/MainLayout'

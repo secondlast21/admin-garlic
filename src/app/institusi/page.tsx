@@ -1,3 +1,5 @@
+'useclient'
+
 import { Metadata, NextPage } from 'next'
 import Institusi from '@/modules/institusi'
 import MainLayout from '@/layout/MainLayout'
