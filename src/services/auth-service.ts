@@ -7,7 +7,32 @@ export interface TLogin {
 
 export interface BaseCurrentUser {
   success: boolean
-  data: any
+  data: Data
+}
+
+export interface Data {
+  id: string
+  name: string
+  email: string
+  phone: string
+  role: string
+  profession: string
+  need: string
+  activeUntil: string
+  emailVerifiedAt: string
+  isNeedExtend: boolean
+  createdAt: string
+  updatedAt: string
+  institution: Institution
+}
+
+export interface Institution {
+  id: string
+  name: string
+  address: string
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
 }
 
 export interface BaseExtendUser {

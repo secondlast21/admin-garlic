@@ -1,9 +1,10 @@
 'use client'
 
-import { currentUser, BaseCurrentUser } from '@/services/auth-service'
+import { currentUser } from '@/services/auth-service'
 import { useMutation } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import MainLayout from './MainLayout'
 
 interface AuthLayoutProps {
   children: JSX.Element
@@ -11,12 +12,19 @@ interface AuthLayoutProps {
 
 const AuthLayout = ({ children }: AuthLayoutProps) => {
   const router = useRouter()
-  const [errorMessage, setErrorMessage] = useState('')
-  
+  const [role, setRole] = useState<string | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
   const { mutate } = useMutation({
     mutationFn: currentUser,
+    onSuccess: (data) => {
+      setRole(data?.data?.role)
+      setIsLoading(false)
+    },
     onError: (error) => {
       setErrorMessage(error?.message)
+      setIsLoading(false)
     },
   })
 
@@ -24,10 +32,27 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
     mutate()
   }, [])
 
-  if (errorMessage === 'Unauthorized') {
-    router.push('/')
+  useEffect(() => {
+    if (!isLoading) {
+      if (role !== 'admin' || errorMessage === 'Unauthorized') {
+        router.push('/')
+      }
+    }
+  }, [isLoading, role, errorMessage])
+
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <></>
+      </MainLayout>
+    )
+  }
+
+  if (role !== 'admin' || errorMessage === 'Unauthorized') {
     return null
-  } else return children
+  } else {
+    return children
+  }
 }
 
 export default AuthLayout
