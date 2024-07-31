@@ -20,8 +20,8 @@ const Sidebar: FC<SidebarProps> = ({ menuList }) => {
 
   const getMenuClass = (menuName: string) => {
     return isActiveRoute(menuName)
-      ? 'bg-primary text-white px-2 py-3 rounded-md mb-2'
-      : 'hover:bg-primary hover:text-white px-2 py-3 rounded-md mb-2'
+      ? 'bg-primary hover:bg-gray-600 text-white px-2 py-3 rounded-md mb-2'
+      : 'hover:bg-gray-600 hover:text-white px-2 py-3 rounded-md mb-2'
   }
 
   return (
