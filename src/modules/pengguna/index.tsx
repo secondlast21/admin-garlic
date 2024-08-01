@@ -4,7 +4,7 @@ import { FC, useState, useEffect, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { debounce } from 'lodash'
 import { getAllUser, activateUser, DatumUser } from '@/services/admin-service'
-import { isExpired, formatMillis, capitalizeFirstLetter } from '@/utils/utils'
+import { isExpired, formatMillis, capitalizeFirstLetter, sortAccByNewest } from '@/utils/utils'
 
 const Pengguna: FC = () => {
   const queryClient = useQueryClient()
@@ -191,11 +191,11 @@ const Pengguna: FC = () => {
       const needExtendData = newUserData.filter((data: any) => data.isNeedExtend && data.activeUntil !== null)
       const noNeedExtendData = newUserData.filter((data: any) => !data.isNeedExtend && data.activeUntil !== null)
 
-      setAllActiveUser(modifyActiveData)
-      setAllInActiveUser(modifyInActiveData)
-      setNewUser(modifyNewData)
-      setNeedExtend(needExtendData)
-      setNoNeedExtend(noNeedExtendData)
+      setAllActiveUser(sortAccByNewest(modifyActiveData))
+      setAllInActiveUser(sortAccByNewest(modifyInActiveData))
+      setNewUser(sortAccByNewest(modifyNewData))
+      setNeedExtend(sortAccByNewest(needExtendData))
+      setNoNeedExtend(sortAccByNewest(noNeedExtendData))
     }
   }, [dataUser, isFetchedUser])
 
@@ -239,6 +239,13 @@ const Pengguna: FC = () => {
           </a>
           <a
             role='tab'
+            className={`tab ${activeTab === 'Pengguna Aktif' ? 'tab-active !bg-gray-200' : ''}`}
+            onClick={() => setActiveTab('Pengguna Aktif')}
+          >
+            Pengguna Aktif
+          </a>
+          <a
+            role='tab'
             className={`tab ${activeTab === 'Pengguna Tidak Aktif' ? 'tab-active !bg-gray-200' : ''}`}
             onClick={() => setActiveTab('Pengguna Tidak Aktif')}
           >
@@ -257,13 +264,6 @@ const Pengguna: FC = () => {
             onClick={() => setActiveTab('Tidak Perlu Perpanjangan')}
           >
             Tidak Perlu Perpanjangan
-          </a>
-          <a
-            role='tab'
-            className={`tab ${activeTab === 'Pengguna Aktif' ? 'tab-active !bg-gray-200' : ''}`}
-            onClick={() => setActiveTab('Pengguna Aktif')}
-          >
-            Pengguna Aktif
           </a>
         </div>
       </div>

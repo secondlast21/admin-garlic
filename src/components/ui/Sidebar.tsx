@@ -34,13 +34,13 @@ const Sidebar: FC<SidebarProps> = ({ menuList }) => {
       <ul className='menu bg-white min-h-full w-60 py-4 px-2 pt-20 lg:pt-0'>
         {menuList.map((menu, idx) => (
           <li key={idx}>
-          <Link
-            href={menu}
-            className={getMenuClass(menu)}
-          >
-            {formatRouteName(menu)}
-          </Link>
-        </li>
+            <Link
+              href={menu}
+              className={getMenuClass(menu)}
+            >
+              {formatRouteName(menu)}
+            </Link>
+          </li>
         ))}
       </ul>
     </div>

@@ -70,7 +70,7 @@ const Login: FC = () => {
 
   const loginSchema = Yup.object().shape({
     email: Yup.string().email().required('Required'),
-    password: Yup.string().required('Required').min(8, 'Too Short!'),
+    password: Yup.string().required('Required').min(8, 'Password minimal 8 karakter'),
   })
 
   return (

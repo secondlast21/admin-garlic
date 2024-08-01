@@ -1,3 +1,5 @@
+import { DatumUser } from '@/services/admin-service'
+
 const { DateTime } = require('luxon')
 
 export function setTitle(input: number) {
@@ -105,4 +107,9 @@ export const formatRouteName = (route: string) => {
     .join(' ')
 
   return formattedRoute
+}
+
+export const sortAccByNewest = (input: DatumUser[]) => {
+  const sortedData = input.sort((a, b) => Number(b.createdAt) - Number(a.createdAt))
+  return sortedData
 }
