@@ -3,7 +3,7 @@
 import { FC, useState, useEffect, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { debounce } from 'lodash'
-import { getAllUser, activateUser, DatumUser } from '@/services/admin-service'
+import { getAllUser, activateUser, BaseUserResponse, DatumUser } from '@/services/admin-service'
 import { isExpired, formatMillis, capitalizeFirstLetter, sortAccByNewest } from '@/utils/utils'
 
 const Pengguna: FC = () => {
@@ -23,7 +23,7 @@ const Pengguna: FC = () => {
     data: dataUser,
     isFetched: isFetchedUser,
     isFetching: isFetchingUser,
-  } = useQuery({
+  } = useQuery<BaseUserResponse>({
     queryKey: ['getAllUser', name, email, isNeedExtend],
     queryFn: () =>
       getAllUser({
