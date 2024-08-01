@@ -4,7 +4,7 @@ import { FC, useState, useEffect, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { debounce } from 'lodash'
 import { getAllUser, activateUser, BaseUserResponse, DatumUser } from '@/services/admin-service'
-import { isExpired, formatMillis, capitalizeFirstLetter, sortAccByNewest } from '@/utils/utils'
+import { isExpired, formatMillis, capitalizeFirstLetter, sortAccByNewest, sortAccByOldest } from '@/utils/utils'
 
 const Pengguna: FC = () => {
   const queryClient = useQueryClient()
@@ -18,6 +18,7 @@ const Pengguna: FC = () => {
   const [email, setEmail] = useState('')
   const [isNeedExtend, setIsNeedExtend] = useState<boolean | undefined>()
   const [activeTab, setActiveTab] = useState('Pengguna Baru')
+  const [sortByNewest, setSortByNewest] = useState(true)
 
   const {
     data: dataUser,
@@ -55,13 +56,29 @@ const Pengguna: FC = () => {
     debouncedSetName(e.target.value)
   }
 
+  const handleCheckboxChange = (event: { target: { checked: boolean | ((prevState: boolean) => boolean) } }) => {
+    setSortByNewest(event.target.checked)
+  }
+
   const onSubmit = (id: number) => {
     mutate(id)
   }
 
-  const renderTable = (data: DatumUser[], tabName: string) => (
+  const renderTable = (data: DatumUser[]) => (
     <div className='bg-white p-4 rounded-xl'>
-      <h2 className='pb-2 font-semibold'>{tabName}</h2>
+      <div className='flex justify-start items-start gap-2'>
+        <p className='pb-2 font-semibold'>Urutkan</p>
+        <p>-</p>
+        <label className='swap'>
+          <input
+            type='checkbox'
+            checked={sortByNewest}
+            onChange={handleCheckboxChange}
+          />
+          <div className='swap-on'>Terbaru</div>
+          <div className='swap-off'>Terlama</div>
+        </label>
+      </div>
       <div className='w-full p-2 bg-white rounded-md overflow-x-auto'>
         {isFetchingUser ? (
           <div className='loading-indicator flex-center'>
@@ -191,13 +208,15 @@ const Pengguna: FC = () => {
       const needExtendData = newUserData.filter((data: any) => data.isNeedExtend && data.activeUntil !== null)
       const noNeedExtendData = newUserData.filter((data: any) => !data.isNeedExtend && data.activeUntil !== null)
 
-      setAllActiveUser(sortAccByNewest(modifyActiveData))
-      setAllInActiveUser(sortAccByNewest(modifyInActiveData))
-      setNewUser(sortAccByNewest(modifyNewData))
-      setNeedExtend(sortAccByNewest(needExtendData))
-      setNoNeedExtend(sortAccByNewest(noNeedExtendData))
+      const sortFunction = sortByNewest ? sortAccByNewest : sortAccByOldest
+
+      setAllActiveUser(sortFunction(modifyActiveData))
+      setAllInActiveUser(sortFunction(modifyInActiveData))
+      setNewUser(sortFunction(modifyNewData))
+      setNeedExtend(sortFunction(needExtendData))
+      setNoNeedExtend(sortFunction(noNeedExtendData))
     }
-  }, [dataUser, isFetchedUser])
+  }, [dataUser, isFetchedUser, sortByNewest])
 
   return (
     <>
@@ -268,11 +287,11 @@ const Pengguna: FC = () => {
         </div>
       </div>
       <div>
-        {activeTab === 'Pengguna Baru' && renderTable(newUser, 'Pengguna Baru')}
-        {activeTab === 'Pengguna Tidak Aktif' && renderTable(allInActiveUser, 'Pengguna Tidak Aktif')}
-        {activeTab === 'Perpanjangan Akun' && renderTable(needExtend, 'Perpanjangan Akun')}
-        {activeTab === 'Tidak Perlu Perpanjangan' && renderTable(noNeedExtend, 'Tidak Perlu Perpanjangan')}
-        {activeTab === 'Pengguna Aktif' && renderTable(allActiveUser, 'Pengguna Aktif')}
+        {activeTab === 'Pengguna Baru' && renderTable(newUser)}
+        {activeTab === 'Pengguna Tidak Aktif' && renderTable(allInActiveUser)}
+        {activeTab === 'Perpanjangan Akun' && renderTable(needExtend)}
+        {activeTab === 'Tidak Perlu Perpanjangan' && renderTable(noNeedExtend)}
+        {activeTab === 'Pengguna Aktif' && renderTable(allActiveUser)}
       </div>
     </>
   )

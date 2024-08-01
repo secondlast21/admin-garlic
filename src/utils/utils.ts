@@ -113,3 +113,8 @@ export const sortAccByNewest = (input: DatumUser[]) => {
   const sortedData = input.sort((a, b) => Number(b.createdAt) - Number(a.createdAt))
   return sortedData
 }
+
+export const sortAccByOldest = (input: DatumUser[]) => {
+  const sortedData = input.sort((a, b) => Number(a.createdAt) - Number(b.createdAt))
+  return sortedData
+}
