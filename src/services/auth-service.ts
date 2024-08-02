@@ -7,10 +7,10 @@ export interface TLogin {
 
 export interface BaseCurrentUser {
   success: boolean
-  data: Data
+  data: DataUser
 }
 
-export interface Data {
+export interface DataUser {
   id: string
   name: string
   email: string
@@ -38,6 +38,27 @@ export interface Institution {
 export interface BaseExtendUser {
   email: string
 }
+
+export interface BaseLoginErrorResponse {
+  success: boolean
+  errors: Error[]
+}
+
+export interface Error {
+  source: string
+  message: string
+}
+
+export interface BaseLoginSuccessResponse {
+  success: boolean
+  data: Success
+}
+
+export interface Success {
+  token: string
+}
+
+
 
 export const loginService = async (body: TLogin): Promise<any> => await api.post('/user/login', body)
 export const currentUser = async (): Promise<BaseCurrentUser> => await api.get('user/current')

@@ -2,9 +2,11 @@
 
 import { FC, useState, useEffect, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { Toaster, toast } from 'sonner'
 import { debounce } from 'lodash'
 import { getAllUser, activateUser, BaseUserResponse, DatumUser } from '@/services/admin-service'
 import { isExpired, formatMillis, capitalizeFirstLetter, sortAccByNewest, sortAccByOldest } from '@/utils/utils'
+
 
 const Pengguna: FC = () => {
   const queryClient = useQueryClient()
@@ -24,6 +26,7 @@ const Pengguna: FC = () => {
     data: dataUser,
     isFetched: isFetchedUser,
     isFetching: isFetchingUser,
+    isError: isErrorUser
   } = useQuery<BaseUserResponse>({
     queryKey: ['getAllUser', name, email, isNeedExtend],
     queryFn: () =>
@@ -38,9 +41,11 @@ const Pengguna: FC = () => {
     mutationFn: activateUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAllUser'] })
+      toast.success('Berhasil mengaktifkan pengguna')
     },
     onError: (error) => {
       console.log('Error:', error)
+      toast.error('Gagal mengaktifkan pengguna')
     },
   })
 
@@ -218,8 +223,15 @@ const Pengguna: FC = () => {
     }
   }, [dataUser, isFetchedUser, sortByNewest])
 
+  useEffect(() => {
+    if (isErrorUser) {
+      toast.error('Gagal mendapatkan data pengguna')
+    }
+  }, [isErrorUser])
+
   return (
     <>
+      <Toaster richColors position='top-right' />
       <div className='mb-[32px] flex flex-wrap items-center justify-between sm:justify-center gap-2'>
         <h1 className='text-[32px] font-bold'>Daftar Pengguna</h1>
         <label className='input input-bordered input-sm flex items-center gap-2'>

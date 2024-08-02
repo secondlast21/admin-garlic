@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation'
 import { Field, Form, Formik, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import { useMutation } from '@tanstack/react-query'
-import { loginService, TLogin } from '@/services/auth-service'
+import { Toaster, toast } from 'sonner'
+import { loginService, TLogin, BaseLoginSuccessResponse, BaseLoginErrorResponse } from '@/services/auth-service'
 import { setTokenInLocalStorage } from '@/utils/tokenManager'
+import { capitalizeEveryWord } from '@/utils/utils'
 
 const EyeIcon = () => (
   <svg
@@ -53,7 +55,7 @@ const Login: FC = () => {
 
   const { mutate, reset } = useMutation({
     mutationFn: loginService,
-    onSuccess: (data) => {
+    onSuccess: (data: BaseLoginSuccessResponse) => {
       const token = data?.data.token
       if (token) {
         setTokenInLocalStorage(token)
@@ -61,8 +63,9 @@ const Login: FC = () => {
         reset()
       }
     },
-    onError: (error) => {
+    onError: (error: BaseLoginErrorResponse) => {
       console.log('Error:', error)
+      toast.error(capitalizeEveryWord(`${error?.errors?.[0]?.source} ${error?.errors?.[0]?.message}`))
     },
   })
 
@@ -74,79 +77,82 @@ const Login: FC = () => {
   })
 
   return (
-    <div className='bg-s1 rounded-md flex flex-col lg:flex-row justify-center items-center h-screen w-screen p-4 lg:p-8 lg:gap-16'>
-      <h2 className='text-4xl lg:text-7xl font-bold text-center lg:text-left text-white mb-8 lg:mb-0'>
-        Login
-        <br />
-        Dashboard
-        <br />
-        Admin INA-Agro
-      </h2>
-      <div className='bg-white p-8 rounded-md w-full max-w-md lg:max-w-lg'>
-        <Formik
-          initialValues={{
-            email: '',
-            password: '',
-          }}
-          validationSchema={loginSchema}
-          onSubmit={(values: TLogin) => {
-            handleSubmit(values)
-          }}
-        >
-          <Form autoComplete='off'>
-            <div className='form-control w-full'>
-              <label className='label'>
-                <span className='label-text font-bold'>Email</span>
-              </label>
-              <Field
-                className='input input-bordered w-full'
-                id='email'
-                name='email'
-                type='email'
-                placeholder='Masukkan email'
-              />
-              <ErrorMessage
-                component='a'
-                className='text-red-500 text-sm'
-                name='email'
-              />
-              <label className='label'>
-                <span className='label-text font-bold'>Password</span>
-              </label>
-              <div className='relative w-full'>
+    <>
+      <Toaster richColors position='top-right' />
+      <div className='bg-s1 rounded-md flex flex-col lg:flex-row justify-center items-center h-screen w-screen p-4 lg:p-8 lg:gap-16'>
+        <h2 className='text-4xl lg:text-7xl font-bold text-center lg:text-left text-white mb-8 lg:mb-0'>
+          Login
+          <br />
+          Dashboard
+          <br />
+          Admin INA-Agro
+        </h2>
+        <div className='bg-white p-8 rounded-md w-full max-w-md lg:max-w-lg'>
+          <Formik
+            initialValues={{
+              email: '',
+              password: '',
+            }}
+            validationSchema={loginSchema}
+            onSubmit={(values: TLogin) => {
+              handleSubmit(values)
+            }}
+          >
+            <Form autoComplete='off'>
+              <div className='form-control w-full'>
+                <label className='label'>
+                  <span className='label-text font-bold'>Email</span>
+                </label>
                 <Field
                   className='input input-bordered w-full'
-                  id='password'
-                  name='password'
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder='Masukkan password'
+                  id='email'
+                  name='email'
+                  type='email'
+                  placeholder='Masukkan email'
                 />
-                <button
-                  type='button'
-                  className='absolute inset-y-0 right-0 pr-3 flex items-center'
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-                </button>
+                <ErrorMessage
+                  component='a'
+                  className='text-red-500 text-sm'
+                  name='email'
+                />
+                <label className='label'>
+                  <span className='label-text font-bold'>Password</span>
+                </label>
+                <div className='relative w-full'>
+                  <Field
+                    className='input input-bordered w-full'
+                    id='password'
+                    name='password'
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder='Masukkan password'
+                  />
+                  <button
+                    type='button'
+                    className='absolute inset-y-0 right-0 pr-3 flex items-center'
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                  </button>
+                </div>
+                <ErrorMessage
+                  component='a'
+                  className='text-red-500 text-sm'
+                  name='password'
+                />
+                <div className='mt-8 text-center'>
+                  <button
+                    type='submit'
+                    className='btn btn-accent w-full py-2'
+                  >
+                    Masuk
+                  </button>
+                </div>
               </div>
-              <ErrorMessage
-                component='a'
-                className='text-red-500 text-sm'
-                name='password'
-              />
-              <div className='mt-8 text-center'>
-                <button
-                  type='submit'
-                  className='btn btn-accent w-full py-2'
-                >
-                  Masuk
-                </button>
-              </div>
-            </div>
-          </Form>
-        </Formik>
+            </Form>
+          </Formik>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

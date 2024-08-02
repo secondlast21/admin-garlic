@@ -2,6 +2,7 @@
 
 import { FC, useState, useEffect, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { Toaster, toast } from 'sonner'
 import { debounce } from 'lodash'
 import { getAllInstitution, BaseInstitutionResponse, Institution } from '@/services/admin-service'
 import { formatMillis } from '@/utils/utils'
@@ -19,6 +20,7 @@ const Institusi: FC = () => {
     data,
     isFetched: isFetchedInstitution,
     isFetching: isFetchingInstitution,
+    isError: isErrorInstitution
   } = useQuery<BaseInstitutionResponse>({
     queryKey: ['getAllUser', name, address, isActive],
     queryFn: () =>
@@ -128,8 +130,15 @@ const Institusi: FC = () => {
     }
   }, [data, isFetchedInstitution])
 
+  useEffect(() => {
+    if (isErrorInstitution) {
+      toast.error('Gagal mendapatkan data institusi')
+    }
+  }, [isErrorInstitution])
+
   return (
     <>
+      <Toaster richColors position='top-right' />
       <div className='mb-[32px] flex flex-wrap items-center justify-between sm:justify-center gap-2'>
         <h1 className='text-[32px] font-bold'>Daftar Institusi</h1>
         <label className='input input-bordered input-sm flex items-center gap-2'>
