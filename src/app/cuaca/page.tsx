@@ -1,10 +1,10 @@
 import { Metadata, NextPage } from 'next'
-import Pengguna from '@/modules/pengguna'
+import Cuaca from '@/modules/cuaca'
 import MainLayout from '@/layout/MainLayout'
 import AuthLayout from '@/layout/AuthLayout'
 
 export const metadata: Metadata = {
-  title: 'Pengguna | INA-Agro',
+  title: 'Cuaca | INA-Agro',
   description: 'Halaman Admin INA-Agro',
 }
 
@@ -12,7 +12,7 @@ const Page: NextPage = () => {
   return (
     <AuthLayout>
       <MainLayout>
-        <Pengguna />
+        <Cuaca />
       </MainLayout>
     </AuthLayout>
   )
