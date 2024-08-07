@@ -58,8 +58,6 @@ export interface Success {
   token: string
 }
 
-
-
 export const loginService = async (body: TLogin): Promise<any> => await api.post('/user/login', body)
 export const currentUser = async (): Promise<BaseCurrentUser> => await api.get('user/current')
 export const extendUser = async (body: BaseExtendUser): Promise<any> => await api.post('/user/request-extend', body)

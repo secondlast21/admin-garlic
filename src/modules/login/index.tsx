@@ -78,7 +78,10 @@ const Login: FC = () => {
 
   return (
     <>
-      <Toaster richColors position='top-right' />
+      <Toaster
+        richColors
+        position='top-right'
+      />
       <div className='bg-s1 rounded-md flex flex-col lg:flex-row justify-center items-center h-screen w-screen p-4 lg:p-8 lg:gap-16'>
         <h2 className='text-4xl lg:text-7xl font-bold text-center lg:text-left text-white mb-8 lg:mb-0'>
           Login

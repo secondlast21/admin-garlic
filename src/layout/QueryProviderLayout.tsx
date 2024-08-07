@@ -15,7 +15,6 @@ const queryClient = new QueryClient({
   },
 })
 
-
 const QueryProviderLayout: FC<ChildrenProps> = ({ children }) => {
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 }

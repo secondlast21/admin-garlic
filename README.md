@@ -4,7 +4,12 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 Use Node.js v20
 
-First, run the development server:
+Then, install bun :
+```bash
+npm install -g bun
+```
+
+First, run the development server :
 
 ```bash
 bun dev

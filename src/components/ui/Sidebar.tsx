@@ -11,11 +11,9 @@ const Sidebar: FC<SidebarProps> = ({ menuList }) => {
   const pathname = usePathname()
 
   const isActiveRoute = (menuName: string) => {
-    const subRoutes = menuList
-
     if (menuName) {
       return pathname === menuName
-    } else return subRoutes.includes(pathname)
+    } else return menuList.includes(pathname)
   }
 
   const getMenuClass = (menuName: string) => {

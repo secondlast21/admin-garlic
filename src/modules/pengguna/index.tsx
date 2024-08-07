@@ -7,7 +7,6 @@ import { debounce } from 'lodash'
 import { getAllUser, activateUser, BaseUserResponse, DatumUser } from '@/services/admin-service'
 import { isExpired, formatMillis, capitalizeFirstLetter, sortAccByNewest, sortAccByOldest } from '@/utils/utils'
 
-
 const Pengguna: FC = () => {
   const queryClient = useQueryClient()
 
@@ -26,7 +25,7 @@ const Pengguna: FC = () => {
     data: dataUser,
     isFetched: isFetchedUser,
     isFetching: isFetchingUser,
-    isError: isErrorUser
+    isError: isErrorUser,
   } = useQuery<BaseUserResponse>({
     queryKey: ['getAllUser', name, email, isNeedExtend],
     queryFn: () =>
@@ -135,14 +134,6 @@ const Pengguna: FC = () => {
                     >
                       Role
                     </th>
-                    {activeTab === 'Pengguna Baru' || activeTab === 'Perpanjangan Akun' ? (
-                      <th
-                        scope='col'
-                        className='text-left th-default'
-                      >
-                        Actions
-                      </th>
-                    ) : null}
                   </tr>
                 </thead>
                 <tbody>
@@ -231,7 +222,10 @@ const Pengguna: FC = () => {
 
   return (
     <>
-      <Toaster richColors position='top-right' />
+      <Toaster
+        richColors
+        position='top-right'
+      />
       <div className='mb-[32px] flex flex-wrap items-center justify-between sm:justify-center gap-2'>
         <h1 className='text-[32px] font-bold'>Daftar Pengguna</h1>
         <label className='input input-bordered input-sm flex items-center gap-2'>

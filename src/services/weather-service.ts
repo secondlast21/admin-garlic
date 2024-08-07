@@ -1,4 +1,4 @@
-import api from "./api";
+import api from './api'
 
 export interface TGetFailedWeather {
   areaLocationId?: string
@@ -27,7 +27,6 @@ export interface AreaLocation {
   createdAt: string
   updatedAt: string
 }
-
 
 export const getAllFailedWeather = async (param: TGetFailedWeather): Promise<BaseFailedWeatherResponse> =>
   await api.get('/daily-weather/fail', {

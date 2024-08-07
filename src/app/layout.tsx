@@ -1,9 +1,6 @@
 import './globals.css'
 import QueryProviderLayout from '@/layout/QueryProviderLayout'
 
-
-
-
 export default function RootLayout({
   children,
 }: Readonly<{

@@ -20,7 +20,7 @@ const Institusi: FC = () => {
     data,
     isFetched: isFetchedInstitution,
     isFetching: isFetchingInstitution,
-    isError: isErrorInstitution
+    isError: isErrorInstitution,
   } = useQuery<BaseInstitutionResponse>({
     queryKey: ['getAllUser', name, address, isActive],
     queryFn: () =>
@@ -138,7 +138,10 @@ const Institusi: FC = () => {
 
   return (
     <>
-      <Toaster richColors position='top-right' />
+      <Toaster
+        richColors
+        position='top-right'
+      />
       <div className='mb-[32px] flex flex-wrap items-center justify-between sm:justify-center gap-2'>
         <h1 className='text-[32px] font-bold'>Daftar Institusi</h1>
         <label className='input input-bordered input-sm flex items-center gap-2'>
