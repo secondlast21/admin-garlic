@@ -72,16 +72,7 @@ const DataSPT: FC = () => {
       } else {
         setErrorMessageSHP('Kesalahan Jaringan')
       }
-      await Swal.fire({
-        icon: 'error',
-        title: 'Gagal',
-        text: errorMessageSHP,
-        buttonsStyling: false,
-        customClass: {
-          confirmButton: 'btn btn-error',
-        },
-        confirmButtonText: 'Kembali',
-      })
+      toast.error(capitalizeEveryWord(errorMessageSHP))
     }
   }
 
@@ -104,16 +95,7 @@ const DataSPT: FC = () => {
       } else {
         setErrorMessageSoil('Kesalahan Jaringan')
       }
-      await Swal.fire({
-        icon: 'error',
-        title: 'Gagal',
-        text: errorMessageSoil,
-        buttonsStyling: false,
-        customClass: {
-          confirmButton: 'btn btn-error',
-        },
-        confirmButtonText: 'Kembali',
-      })
+      toast.error(capitalizeEveryWord(errorMessageSoil))
     }
   }
 
@@ -131,42 +113,14 @@ const DataSPT: FC = () => {
       fileDownload(response, `Cuaca ${districtName}.xlxs`)
     } catch (error: any) {
       if (error?.message) {
-        await Swal.fire({
-          icon: 'error',
-          title: 'Gagal',
-          text: error?.message,
-          buttonsStyling: false,
-          customClass: {
-            confirmButton: 'btn btn-error',
-          },
-          confirmButtonText: 'Kembali',
-        })
+        toast.error(capitalizeEveryWord(error?.message))
       } else if (error?.errors) {
         const source = error?.errors?.[0]?.source
         const msg = error?.errors?.[0]?.message
         const errorMsg = `${source} ${msg}`
-
-        await Swal.fire({
-          icon: 'error',
-          title: 'Gagal',
-          text: errorMsg,
-          buttonsStyling: false,
-          customClass: {
-            confirmButton: 'btn btn-error',
-          },
-          confirmButtonText: 'Kembali',
-        })
+        toast.error(capitalizeEveryWord(errorMsg))
       } else {
-        await Swal.fire({
-          icon: 'error',
-          title: 'Gagal',
-          text: 'Kesalahan jaringan',
-          buttonsStyling: false,
-          customClass: {
-            confirmButton: 'btn btn-error',
-          },
-          confirmButtonText: 'Kembali',
-        })
+        toast.error('Kesalahan Jaringan')
       }
     }
   }

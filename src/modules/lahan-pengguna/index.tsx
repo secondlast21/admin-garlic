@@ -1,7 +1,6 @@
 'use client'
 
-import { FC } from 'react'
-import Link from 'next/link'
+import { FC, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Toaster, toast } from 'sonner'
 import {
@@ -10,12 +9,15 @@ import {
   BaseUserAreaLocation,
   UserAreaData,
   BaseUserAreaFailureResponse,
+  Observation,
+  GrowthVariable,
 } from '@/services/map-user-service'
-import { formatMillis } from '@/utils/utils'
-import { capitalizeEveryWord } from '@/utils/utils'
+import { formatMillis, setBg, setTitle, translateVariable, capitalizeEveryWord } from '@/utils/utils'
 
 const LahanPengguna: FC = () => {
   const queryClient = useQueryClient()
+  const [selectedUserArea, setSelectedUserArea] = useState<UserAreaData | null>(null)
+  const modal = document.getElementById('detail_modal') as HTMLDialogElement | null
 
   const { data, isFetching, isError } = useQuery<BaseUserAreaLocation>({
     queryKey: ['getUserAreaLocation'],
@@ -25,15 +27,31 @@ const LahanPengguna: FC = () => {
   const { mutate } = useMutation({
     mutationFn: deleteUserAreaLocation,
     onSuccess: () => {
+      modal?.close()
       queryClient.invalidateQueries({ queryKey: ['getUserAreaLocation'] })
     },
     onError: (error: BaseUserAreaFailureResponse) => {
+      modal?.close()
       toast.error(capitalizeEveryWord(`${error?.errors?.[0]?.source} ${error?.errors?.[0]?.message}`))
     },
   })
 
-  const onClickDelete = (id: string) => {
-    mutate(id)
+  const onClickDelete = (id?: string) => {
+    if (id) {
+      mutate(id)
+    } else {
+      modal?.close()
+      toast.error('Id tidak ada')
+    }
+  }
+
+  const onClickModal = (userArea: UserAreaData) => {
+    if (modal) {
+      setSelectedUserArea(userArea)
+      modal.showModal()
+    } else {
+      toast.error('Modal tidak ditemukan')
+    }
   }
 
   if (isError) {
@@ -63,19 +81,11 @@ const LahanPengguna: FC = () => {
               <td className='td-default'>{userArea?.pointLocation?.latitude ?? '-'}</td>
               <td className='td-default'>{userArea?.pointLocation?.longitude ?? '-'}</td>
               <td className='td-default'>
-                <Link
-                  href={`/lahan-pengguna/${userArea.id}`}
-                  className='btn btn-accent btn-sm font-normal'
-                >
-                  Lihat detail lahan
-                </Link>
-              </td>
-              <td className='td-default'>
                 <button
-                  className='btn btn-error btn-outline btn-sm font-normal'
-                  onClick={() => onClickDelete(userArea.id)}
+                  className='btn btn-accent btn-sm font-normal'
+                  onClick={() => onClickModal(userArea)}
                 >
-                  Hapus lahan
+                  Lihat Detail
                 </button>
               </td>
             </tr>
@@ -128,6 +138,129 @@ const LahanPengguna: FC = () => {
           renderNoData()
         )}
       </div>
+      <dialog
+        id='detail_modal'
+        className='modal modal-middle sm:modal-bottom'
+      >
+        <div className='modal-box'>
+          <h3 className='font-semibold text-lg'>{selectedUserArea?.landName}</h3>
+          <section className='py-4 text-sm border-b-[1px] border-black'>
+            <h4 className='font-semibold pb-1'></h4>
+            <ul>
+              <li>Tanggal dibuat : {formatMillis(Number(selectedUserArea?.createdAt), 'EEEE, dd/MM/yyyy') ?? '-'}</li>
+              <li>Tanggal diupdate : {formatMillis(Number(selectedUserArea?.updatedAt), 'EEEE, dd/MM/yyyy') ?? '-'}</li>
+            </ul>
+          </section>
+          <section className='py-4 text-sm border-b-[1px] border-black'>
+            <h4 className='font-semibold pb-1'>Koordinat</h4>
+            <ul>
+              <li>Latitude : {selectedUserArea?.pointLocation?.latitude ?? '-'}</li>
+              <li>Longitude : {selectedUserArea?.pointLocation?.longitude ?? '-'}</li>
+            </ul>
+          </section>
+          <section className='py-4 text-sm'>
+            <h4 className='font-semibold pb-1'>Observasi</h4>
+            <div className='join join-vertical w-full'>
+              {selectedUserArea?.observations?.map((observation: Observation, idx: number) => {
+                return (
+                  <div
+                    className='collapse collapse-arrow join-item border-base-300 border'
+                    key={idx}
+                  >
+                    <input
+                      type='radio'
+                      name='my-accordion-4'
+                      defaultChecked={idx === 0}
+                    />
+                    <div className='collapse-title'>
+                      Observasi {idx + 1} -{' '}
+                      <span className={setBg(Number(observation?.landSuitabilityClass?.land))}>
+                        {setTitle(Number(observation?.landSuitabilityClass?.land))}
+                      </span>
+                    </div>
+                    <div className='collapse-content'>
+                      <section className='border-b-[1px] border-black pb-2'>
+                        <ul>
+                          <li>
+                            Tanggal dibuat : {formatMillis(Number(observation?.createdAt), 'EEEE, dd/MM/yyyy') ?? '-'}
+                          </li>
+                          <li>
+                            Tanggal diupdate : {formatMillis(Number(observation?.updatedAt), 'EEEE, dd/MM/yyyy') ?? '-'}
+                          </li>
+                        </ul>
+                      </section>
+                      <section className='py-2'>
+                        <ul>
+                          {observation?.growthVariables.map((growthVar: GrowthVariable, idx: number) => {
+                            return (
+                              <li
+                                key={idx}
+                                className='mb-3'
+                              >
+                                {translateVariable(growthVar.variable)} :{' '}
+                                <span
+                                  className={setBg(
+                                    Number(
+                                      observation?.growthVariables.filter(
+                                        (item) => item.variable === growthVar?.variable
+                                      )?.[0]?.class
+                                    )
+                                  )}
+                                >
+                                  {setTitle(
+                                    Number(
+                                      observation?.growthVariables.filter(
+                                        (item) => item.variable === growthVar?.variable
+                                      )?.[0]?.class
+                                    )
+                                  )}
+                                </span>
+                              </li>
+                            )
+                          })}
+                          <li>
+                            Temperatur :{' '}
+                            <span
+                              className={setBg(
+                                Number(
+                                  observation?.growthVariables.filter((item) => item.variable === 'temperature')?.[0]
+                                    ?.class
+                                )
+                              )}
+                            >
+                              {setTitle(
+                                Number(
+                                  observation?.growthVariables.filter((item) => item.variable === 'temperature')?.[0]
+                                    ?.class
+                                )
+                              )}
+                            </span>
+                          </li>
+                        </ul>
+                      </section>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </section>
+
+          <div className='modal-action'>
+            <form method='dialog'>
+              <button
+                className='btn btn-error btn-outline btn-sm font-normal mr-2'
+                onClick={(event) => {
+                  event.preventDefault()
+                  onClickDelete(selectedUserArea?.id)
+                }}
+              >
+                Hapus lahan
+              </button>
+              <button className='btn btn-outline btn-sm font-normal'>Close</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </>
   )
 }

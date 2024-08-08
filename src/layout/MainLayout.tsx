@@ -23,7 +23,7 @@ const MainLayout: FC<ChildrenProps> = ({ children }) => {
           <div className='drawer-content flex flex-col overflow-auto !h-[calc(100%-68px)]'>
             <div className='p-4'>{children}</div>
           </div>
-          <Sidebar menuList={['/pengguna', '/institusi', '/cuaca', '/lahan-pengguna']} />
+          <Sidebar menuList={['/pengguna', '/institusi', '/cuaca', '/lahan-pengguna', '/data-spt']} />
           {/* '/data-spt',  */}
         </div>
       </div>

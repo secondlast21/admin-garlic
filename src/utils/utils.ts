@@ -16,14 +16,14 @@ export function setTitle(input: number) {
 
 export function setBg(input: number) {
   if (input <= 4 && input > 3.5) {
-    return 'bg-s1 p-1 rounded-md text-white'
+    return 'bg-s1 py-1 px-2 rounded-full text-white'
   } else if (input <= 3.5 && input > 2.5) {
-    return 'bg-s2 p-1 rounded-md text-white'
+    return 'bg-s2 py-1 px-2 rounded-full text-white'
   } else if (input <= 2.5 && input > 1.5) {
-    return 'bg-s3 p-1 rounded-md text-white'
+    return 'bg-s3 py-1 px-2 rounded-full text-white'
   } else if (input <= 1.5 && input >= 0) {
-    return 'bg-n p-1 rounded-md text-white'
-  } else return 'bg-[#6f6f6f] p-1 rounded-md text-white'
+    return 'bg-n py-1 px-2 rounded-full text-white'
+  } else return 'bg-[#6f6f6f] py-1 px-2 rounded-full text-white'
 }
 
 export function setResultTitle(input: number) {
@@ -80,8 +80,7 @@ export const formatMillis = (seconds: number, format: string) =>
 export function isExpired(input: Number) {
   const now = DateTime.local().toMillis()
   if (input === null) return false
-  if (input > now) return true
-  return false
+  return input > now
 }
 
 export function capitalizeFirstLetter(str: String) {
@@ -101,20 +100,35 @@ export const formatRouteName = (route: string) => {
 
   const trimmedRoute = route.startsWith('/') ? route.slice(1) : route
 
-  const formattedRoute = trimmedRoute
+  return trimmedRoute
     .split('-')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
-
-  return formattedRoute
 }
 
 export const sortAccByNewest = (input: DatumUser[]) => {
-  const sortedData = input.sort((a, b) => Number(b.createdAt) - Number(a.createdAt))
-  return sortedData
+  return input.sort((a, b) => Number(b.createdAt) - Number(a.createdAt))
 }
 
 export const sortAccByOldest = (input: DatumUser[]) => {
-  const sortedData = input.sort((a, b) => Number(a.createdAt) - Number(b.createdAt))
-  return sortedData
+  return input.sort((a, b) => Number(a.createdAt) - Number(b.createdAt))
+}
+
+export const translateVariable = (variable: string): string => {
+  const translations: { [key: string]: string } = {
+    drainage: 'Drainase',
+    soil_texture: 'Tekstur tanah',
+    soil_acidity: 'Kemasaman tanah',
+    cation_exchange_capacity: 'Kapasitas tukar kation',
+    base_saturation: 'Saturasi basa',
+    relief: 'Relief',
+    temperature: 'Temperatur',
+    rainfall: 'Curah hujan',
+    solar_radiation: 'Radiasi matahari',
+    sunshine_duration: 'Lama penyinaran',
+    elevation: 'Elevasi',
+    soil_mineral_depth: 'Kedalaman mineral tanah',
+  }
+
+  return translations[variable] || 'Unknown'
 }
